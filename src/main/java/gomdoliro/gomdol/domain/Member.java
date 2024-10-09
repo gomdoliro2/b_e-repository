@@ -1,6 +1,8 @@
 package gomdoliro.gomdol.domain;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -25,12 +27,16 @@ public class Member implements UserDetails {
     @Column(name = "member_id")
     private Long id;
 
+    @NotNull(message = "이메일은 필수 사항입니다.")
+    @Email(message = "유효한 이메일 형식이 아닙니다.")
     @Column(nullable = false, unique = true)
     private String email;
 
+    @NotNull(message = "비밀번호은 필수 사항입니다.")
     @Column(nullable = false)
     private String password;
 
+    @NotNull(message = "이름은 필수 사항입니다.")
     @Column(length = 16, nullable = false, unique = true)
     private String nickname;
 

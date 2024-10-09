@@ -29,9 +29,10 @@ public class SecurityConfig {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // 세션 정책을 STATELESS로 설정
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/**").permitAll()
-//                        .requestMatchers("/members/sign-in").permitAll() // 해당 경로에 대해 모든 요청 허용
-//                        .requestMatchers("/members/test").hasRole("USER") // 해당 경로에 대해 USER 권한 필요
-//                        .anyRequest().authenticated() // 이외의 모든 요청에는 권한 필요
+                        .requestMatchers("/members/**").permitAll() // 해당 경로에 대해 모든 요청 허용
+                        .requestMatchers("/board/**").hasRole("USER") // 해당 경로에 대해 USER 권한 필요
+                        .requestMatchers("/members/test").hasRole("USER")
+                        .anyRequest().authenticated() // 이외의 모든 요청에는 권한 필요
                 )
                 //JWT 필터를 추가하여 인증 처리를 수행
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
