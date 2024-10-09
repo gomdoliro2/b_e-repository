@@ -1,0 +1,52 @@
+HELP.md
+.gradle
+build/
+!gradle/wrapper/gradle-wrapper.jar
+!**/src/main/**/build/
+!**/src/test/**/build/
+SecurityConfig.java
+SecurityUtil.java
+JwtToken.java
+SignInRequest.java
+SignUpRequest.java
+SignUpResponse.java
+MemberController.java
+Member.java
+MemberRepository.java
+JwtAuthenticationFilter.java
+JwtTokenProvider.java
+CustomUserDetailsService.java
+MemberService.java
+# Ignore all test files
+/src/test/java/**/*.java
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+bin/
+!**/src/main/**/bin/
+!**/src/test/**/bin/
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+out/
+!**/src/main/**/out/
+!**/src/test/**/out/
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+### VS Code ###
+.vscode/
