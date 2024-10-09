@@ -4,19 +4,6 @@ build/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
-SecurityConfig.java
-SecurityUtil.java
-JwtToken.java
-SignInRequest.java
-SignUpRequest.java
-SignUpResponse.java
-MemberController.java
-Member.java
-MemberRepository.java
-JwtAuthenticationFilter.java
-JwtTokenProvider.java
-CustomUserDetailsService.java
-MemberService.java
 # Ignore all test files
 /src/test/java/**/*.java
 
