@@ -32,7 +32,7 @@ public class Member implements UserDetails {
     @Column(nullable = false, unique = true)
     private String email;
 
-    @NotNull(message = "비밀번호은 필수 사항입니다.")
+    @NotNull(message = "비밀번호는 필수 사항입니다.")
     @Column(nullable = false)
     private String password;
 

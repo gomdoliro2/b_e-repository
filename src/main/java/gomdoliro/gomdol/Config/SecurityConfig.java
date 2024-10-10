@@ -28,7 +28,6 @@ public class SecurityConfig {
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // 세션 정책을 STATELESS로 설정
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/**").permitAll()
                         .requestMatchers("/members/**").permitAll() // 해당 경로에 대해 모든 요청 허용
                         .requestMatchers("/board/**").hasRole("USER") // 해당 경로에 대해 USER 권한 필요
                         .requestMatchers("/members/test").hasRole("USER")
