@@ -5,6 +5,7 @@ import gomdoliro.gomdol.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -20,23 +21,27 @@ public class SecurityConfig {
     private final JwtTokenProvider jwtTokenProvider;
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity httpsecurity) throws Exception {
-        httpsecurity
-                // HTTP basic 인증 비활성화
-                .securityContext(securityContext -> securityContext.requireExplicitSave(false))
-                .csrf(csrf -> csrf.disable()) // csrf 비활성화
-                .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // 세션 정책을 STATELESS로 설정
-                .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/**").permitAll()
-                        .requestMatchers("/members/**").permitAll() // 해당 경로에 대해 모든 요청 허용
-                        .requestMatchers("/board/**").hasRole("USER") // 해당 경로에 대해 USER 권한 필요
-                        .requestMatchers("/members/test").hasRole("USER")
-                        .anyRequest().authenticated() // 이외의 모든 요청에는 권한 필요
-                )
-                //JWT 필터를 추가하여 인증 처리를 수행
-                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
-        return httpsecurity.build();
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        // httpBasic과 csrf 비활성화
+        http.httpBasic(httpBasic -> httpBasic.disable())
+                .csrf(csrf -> csrf.disable());
+
+        // 세션 사용하지 않음 (JWT)
+        http.sessionManagement(session -> session
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+
+        // 권한 설정
+        http.authorizeHttpRequests(auth -> auth
+                .requestMatchers("/members/test").hasRole("USER")
+                .requestMatchers("/board/**").hasRole("USER")
+                .anyRequest().permitAll()  // 그 외는 인증 필요
+        );
+
+        // JWT 필터 추가 (UsernamePasswordAuthenticationFilter 전에)
+        http.addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider),
+                UsernamePasswordAuthenticationFilter.class);
+
+        return http.build();
     }
 
     @Bean

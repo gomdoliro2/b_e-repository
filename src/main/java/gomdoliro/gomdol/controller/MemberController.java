@@ -1,13 +1,12 @@
 package gomdoliro.gomdol.controller;
 
-import gomdoliro.gomdol.Config.SecurityUtil;
+//import gomdoliro.gomdol.Config.SecurityUtil;
 import gomdoliro.gomdol.controller.dto.JwtToken;
 import gomdoliro.gomdol.controller.dto.SignInRequest;
 import gomdoliro.gomdol.controller.dto.SignUpRequest;
 import gomdoliro.gomdol.controller.dto.SignUpResponse;
 import gomdoliro.gomdol.domain.Member;
 import gomdoliro.gomdol.service.MemberService;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -34,7 +33,7 @@ public class MemberController {
     }
 
     @PostMapping("/sign-up")
-    public ResponseEntity<SignUpResponse> signUp(@Valid @RequestBody SignUpRequest signUpRequest) {
+    public ResponseEntity<SignUpResponse> signUp(@RequestBody SignUpRequest signUpRequest) {
         SignUpResponse savedMember = memberService.signUp(signUpRequest);
         return ResponseEntity.ok(savedMember);
     }
