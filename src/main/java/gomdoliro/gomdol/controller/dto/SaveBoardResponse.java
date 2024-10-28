@@ -11,10 +11,12 @@ public class SaveBoardResponse {
     private Long id;
     private String title;
     private String content;
+    private String authorNickname;
 
     public SaveBoardResponse(Board board) {
         this.id = board.getId();
         this.title = board.getTitle();
         this.content = board.getContent();
+        this.authorNickname = board.getAuthorNickname();
     }
 }
