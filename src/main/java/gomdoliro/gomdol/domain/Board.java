@@ -4,8 +4,15 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
+@EntityListeners(AuditingEntityListener.class)
 @NoArgsConstructor
 @Getter
 public class Board {
@@ -19,6 +26,9 @@ public class Board {
     private String content;
 
     private String authorNickname;
+
+    @CreatedDate
+    private LocalDate createdAt;
 
 
     @Builder
