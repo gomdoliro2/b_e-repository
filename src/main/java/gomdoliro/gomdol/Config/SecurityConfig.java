@@ -34,6 +34,8 @@ public class SecurityConfig {
         http.authorizeHttpRequests(auth -> auth
                 .requestMatchers("/members/test").hasRole("USER")
                 .requestMatchers("/board/**").hasRole("USER")
+                .requestMatchers("/comments/**").hasRole("USER")
+                .requestMatchers("/board/{boardId}/comments").hasRole("USER")
                 .anyRequest().permitAll()  // 그 외는 인증 필요
         );
 

@@ -1,12 +1,11 @@
 package gomdoliro.gomdol.service;
 
+import gomdoliro.gomdol.controller.dto.BoardAndCommentResponse;
 import gomdoliro.gomdol.controller.dto.SaveBoardRequest;
 import gomdoliro.gomdol.controller.dto.SaveBoardResponse;
 import gomdoliro.gomdol.controller.dto.UpdateBoardRequest;
-import gomdoliro.gomdol.domain.Board;
-import gomdoliro.gomdol.domain.BoardRepository;
-import gomdoliro.gomdol.domain.Member;
-import gomdoliro.gomdol.domain.MemberRepository;
+import gomdoliro.gomdol.controller.dto.comment.CommentResponse;
+import gomdoliro.gomdol.domain.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -21,6 +20,7 @@ import java.util.NoSuchElementException;
 public class BoardService {
     private final BoardRepository boardRepository;
     private final MemberRepository memberRepository;
+    private final CommentRepository commentRepository;
 
     public SaveBoardResponse save(SaveBoardRequest request) {
         if (request.getTitle() == null || request.getTitle().isEmpty()) {
@@ -55,10 +55,14 @@ public class BoardService {
                 .toList();
     }
 
-    public SaveBoardResponse get(Long id) {
+    public BoardAndCommentResponse get(Long id) {
         Board board =  boardRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("해당 게시글을 찾을 수 없습니다."));
-        return new SaveBoardResponse(board);
+        List<CommentResponse> comments = commentRepository.findByBoardId(id).stream()
+                .map(CommentResponse::new)
+                .toList();
+
+        return new BoardAndCommentResponse(board, comments);
     }
 
     @Transactional

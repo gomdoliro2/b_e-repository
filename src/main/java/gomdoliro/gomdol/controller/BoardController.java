@@ -1,5 +1,6 @@
 package gomdoliro.gomdol.controller;
 
+import gomdoliro.gomdol.controller.dto.BoardAndCommentResponse;
 import gomdoliro.gomdol.controller.dto.SaveBoardRequest;
 import gomdoliro.gomdol.controller.dto.SaveBoardResponse;
 import gomdoliro.gomdol.controller.dto.UpdateBoardRequest;
@@ -30,7 +31,7 @@ public class BoardController {
     }
 
     @GetMapping("/get/{id}")
-    public SaveBoardResponse get(@PathVariable Long id) {
+    public BoardAndCommentResponse get(@PathVariable Long id) {
         return boardService.get(id);
     }
 
