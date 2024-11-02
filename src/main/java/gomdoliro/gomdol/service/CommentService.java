@@ -1,5 +1,6 @@
 package gomdoliro.gomdol.service;
 
+import gomdoliro.gomdol.controller.dto.comment.ChildCommentRequest;
 import gomdoliro.gomdol.controller.dto.comment.CommentRequest;
 import gomdoliro.gomdol.controller.dto.comment.CommentResponse;
 import gomdoliro.gomdol.controller.dto.comment.UpdateCommentRequest;
@@ -9,6 +10,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.NoSuchElementException;
 
 @Service
@@ -39,6 +41,23 @@ public class CommentService {
         return new CommentResponse(saveComment);
     }
 
+    public CommentResponse childSave(ChildCommentRequest request) {
+        Comment pComment = commentRepository.findById(request.getCommentId()).orElseThrow(NoSuchElementException::new);
+        if(request.getContent() == null || request.getContent().isEmpty()) {
+            throw new IllegalArgumentException("답글이 작성되지 않았습니다.");
+        }
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        String authorName = memberRepository.findByEmail(email)
+                .map(Member::getNickname)
+                .orElseThrow(() -> new NoSuchElementException("로그인 된 회원을 찾을 수 없습니다."));
+
+        Comment comment = new Comment(pComment,authorName,request.getContent());
+        Comment saveComment = commentRepository.save(comment);
+        return new CommentResponse(saveComment);
+
+    }
+
     @Transactional
     public CommentResponse update(UpdateCommentRequest request) {
         Comment comment = commentRepository.findById(request.getComment_id())
@@ -50,5 +69,11 @@ public class CommentService {
 
     public void delete(Long commentId) {
         commentRepository.deleteById(commentId);
+    }
+
+    public List<CommentResponse> getChildComment(Long parentId) {
+        return commentRepository.findByParentId(parentId).stream()
+                .map(CommentResponse::new)
+                .toList();
     }
 }
