@@ -14,7 +14,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CommentController {
 
-    private final CommentService commentService;
+    private final CommentService
+            commentService;
 
     @PostMapping("/board/{boardId}/comments")
     public CommentResponse saveComment(@PathVariable Long boardId, @RequestBody CommentRequest commentRequest) {
