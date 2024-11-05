@@ -24,7 +24,7 @@ public class OpenAiService {
     private final ObjectMapper objectMapper;
 
     public SummaryResponse getSummary(String content,String title) {
-        String prompt = String.format("다음 게시글을 요약해 주세요: %s 제목은 %s", content,title);
+        String prompt = String.format("다음 게시글을 3줄 요약해 주세요 하지만 4줄 이하로 구분하지 말고 자연스럽게 요약해 주세요: %s 제목은 %s", content,title);
         prompt = prompt.replace("\n"," ").replace("\r"," ").replace("\n\r"," ").replace("\t"," ");
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + openAiApiKey);
