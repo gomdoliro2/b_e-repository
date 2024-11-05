@@ -1,17 +1,17 @@
 package gomdoliro.gomdol.controller;
 
-import gomdoliro.gomdol.controller.dto.BoardAndCommentResponse;
-import gomdoliro.gomdol.controller.dto.SaveBoardRequest;
-import gomdoliro.gomdol.controller.dto.SaveBoardResponse;
-import gomdoliro.gomdol.controller.dto.UpdateBoardRequest;
+import gomdoliro.gomdol.controller.dto.*;
 import gomdoliro.gomdol.domain.Board;
+import gomdoliro.gomdol.domain.BoardRepository;
 import gomdoliro.gomdol.service.BoardService;
+import gomdoliro.gomdol.service.OpenAiService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.awt.*;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @RestController
 @RequiredArgsConstructor
@@ -19,6 +19,8 @@ import java.util.List;
 public class BoardController {
 
     private final BoardService boardService;
+    private final BoardRepository boardRepository;
+    private final OpenAiService openAiService;
 
     @PostMapping("/save")
     public SaveBoardResponse save(@RequestBody SaveBoardRequest request) {
@@ -44,6 +46,13 @@ public class BoardController {
     public ResponseEntity<String> delete(@PathVariable Long id) {
         boardService.delete(id);
         return ResponseEntity.ok("삭제가 완료되었습니다.");
+    }
+
+    @GetMapping("/summarize/{boardId}")
+    public SummaryResponse summarize(@PathVariable Long boardId) {
+        Board board = boardRepository.findById(boardId)
+                .orElseThrow(() -> new NoSuchElementException());
+        return openAiService.getSummary(board.getContent(),board.getTitle());
     }
 
 }
