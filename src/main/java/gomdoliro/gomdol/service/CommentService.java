@@ -68,7 +68,22 @@ public class CommentService {
     }
 
     public void delete(Long commentId) {
-        commentRepository.deleteById(commentId);
+        if(!commentRepository.existsById(commentId)) {
+            throw new NoSuchElementException("해당 게시물을 찾을 수 없습니다.");
+        }
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        if(commentRepository.findById(commentId)
+                .orElseThrow(() -> new NoSuchElementException("해당 댓글을 찾을 수 없습니다.")).getAuthorName()
+                .equals(memberRepository.findByEmail(email)
+                        .orElseThrow(() -> new NoSuchElementException("해당 유저를 찾을 수 없습니다.")).getNickname()))
+        {
+            commentRepository.deleteById(commentId);
+        }
+        else {
+            throw new NoSuchElementException("본인이 쓴 댓글만 삭제할 수 있습니다.");
+        }
+
+
     }
 
     public List<CommentResponse> getChildComment(Long parentId) {

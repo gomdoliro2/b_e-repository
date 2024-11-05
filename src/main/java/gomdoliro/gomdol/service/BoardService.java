@@ -6,8 +6,8 @@ import gomdoliro.gomdol.controller.dto.SaveBoardResponse;
 import gomdoliro.gomdol.controller.dto.UpdateBoardRequest;
 import gomdoliro.gomdol.controller.dto.comment.CommentResponse;
 import gomdoliro.gomdol.domain.*;
+import gomdoliro.gomdol.exception.NoSameUserException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -85,6 +85,15 @@ public class BoardService {
         if(!boardRepository.existsById(id)) {
             throw new NoSuchElementException("해당 게시물을 찾을 수 없습니다.");
         }
-        boardRepository.deleteById(id);
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        if(boardRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("해당 게시물을 찾을 수 없습니다.")).getAuthorNickname().equals(memberRepository.findByEmail(email)
+                .orElseThrow(() -> new NoSuchElementException("해당 유저를 찾을 수 없습니다.")).getNickname())) {
+            boardRepository.deleteById(id);
+        }
+        else {
+            throw new NoSuchElementException("본인이 쓴 글만 삭제할 수 있습니다.");
+        }
+
     }
 }
