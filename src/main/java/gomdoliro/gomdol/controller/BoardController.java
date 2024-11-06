@@ -51,7 +51,7 @@ public class BoardController {
     @GetMapping("/summarize/{boardId}")
     public SummaryResponse summarize(@PathVariable Long boardId) {
         Board board = boardRepository.findById(boardId)
-                .orElseThrow(() -> new NoSuchElementException());
+                .orElseThrow(() -> new NoSuchElementException("해당 게시글을 찾을 수 없습니다."));
         return openAiService.getSummary(board.getContent(),board.getTitle());
     }
 

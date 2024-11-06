@@ -21,7 +21,8 @@ public class CommentService {
     private final MemberRepository memberRepository;
 
     public CommentResponse save(CommentRequest request) {
-        Board board = boardRepository.findById(request.getBoardId()).orElseThrow(NoSuchElementException::new);
+        Board board = boardRepository.findById(request.getBoardId())
+                .orElseThrow(() -> new NoSuchElementException("해당 게시글이 존재하지 않습니다."));
         if(request.getContent() == null || request.getContent().isEmpty()) {
             throw new IllegalArgumentException("답글이 작성되지 않았습니다.");
         }
@@ -62,9 +63,19 @@ public class CommentService {
     public CommentResponse update(UpdateCommentRequest request) {
         Comment comment = commentRepository.findById(request.getComment_id())
                 .orElseThrow(() -> new NoSuchElementException("찾으시는 댓글이 존재하지 않습니다."));
-        comment.update(request.getContent());
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        if(commentRepository.findById(request.getComment_id())
+                .orElseThrow(() -> new NoSuchElementException("해당 댓글을 찾을 수 없습니다.")).getAuthorName()
+                .equals(memberRepository.findByEmail(email)
+                        .orElseThrow(() -> new NoSuchElementException("해당 유저를 찾을 수 없습니다.")).getNickname()))
+        {
+            comment.update(request.getContent());
 
-        return new CommentResponse(comment);
+            return new CommentResponse(comment);
+        }
+        else {
+            throw new NoSuchElementException("본인이 쓴 댓글만 수정할 수 있습니다.");
+        }
     }
 
     public void delete(Long commentId) {

@@ -6,7 +6,6 @@ import gomdoliro.gomdol.controller.dto.SaveBoardResponse;
 import gomdoliro.gomdol.controller.dto.UpdateBoardRequest;
 import gomdoliro.gomdol.controller.dto.comment.CommentResponse;
 import gomdoliro.gomdol.domain.*;
-import gomdoliro.gomdol.exception.NoSameUserException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -74,11 +73,21 @@ public class BoardService {
         if (request.getContent() == null || request.getContent().isEmpty()) {
             throw new IllegalArgumentException("내용이 비어있습니다.");
         }
-        Board board = boardRepository.findById(request.getId())
-                .orElseThrow(() -> new NoSuchElementException("해당 게시글을 찾을 수 없습니다."));
-        board.update(request.getTitle(), request.getContent());
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        if(boardRepository.findById(request.getId())
+                .orElseThrow(() -> new NoSuchElementException("해당 게시물을 찾을 수 없습니다.")).getAuthorNickname().equals(memberRepository.findByEmail(email)
+                        .orElseThrow(() -> new NoSuchElementException("해당 유저를 찾을 수 없습니다.")).getNickname())
+        )
+        {
+            Board board = boardRepository.findById(request.getId())
+                    .orElseThrow(() -> new NoSuchElementException("해당 게시글을 찾을 수 없습니다."));
+            board.update(request.getTitle(), request.getContent());
 
-        return new SaveBoardResponse(board);
+            return new SaveBoardResponse(board);
+        }
+        else {
+            throw new IllegalArgumentException("본인이 쓴 글만 수정할 수 있습니다.");
+        }
     }
 
     public void delete(Long id) {
@@ -92,7 +101,7 @@ public class BoardService {
             boardRepository.deleteById(id);
         }
         else {
-            throw new NoSuchElementException("본인이 쓴 글만 삭제할 수 있습니다.");
+            throw new IllegalArgumentException("본인이 쓴 글만 삭제할 수 있습니다.");
         }
 
     }
