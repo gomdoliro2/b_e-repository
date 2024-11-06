@@ -58,6 +58,18 @@ public class MemberService {
         if(memberRepository.findByEmail(signUpRequest.getEmail()).isPresent()) {
             throw new IllegalArgumentException("이미 사용중인 이메일입니다.");
         }
+        if(signUpRequest.getEmail() == null || signUpRequest.getEmail().isEmpty()) {
+            throw new IllegalArgumentException("이메일을 작성하지 않았습니다.");
+        }
+        if(signUpRequest.getPassword() == null || signUpRequest.getPassword().isEmpty()) {
+            throw new IllegalArgumentException("비밀번호를 작성하지 않았습니다.");
+        }
+        if(signUpRequest.getNickname() == null || signUpRequest.getNickname().isEmpty()) {
+            throw new IllegalArgumentException("이름을 입력하지 않았습니다.");
+        }
+        if(memberRepository.findByEmail(signUpRequest.getNickname()).isPresent()) {
+            throw new IllegalArgumentException("이미 사용중인 이름입니다.");
+        }
         //Password 암호화
         String encodedPassword = passwordEncoder.encode(signUpRequest.getPassword());
         List<String> roles = new ArrayList<>();
