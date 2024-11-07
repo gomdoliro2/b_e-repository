@@ -56,6 +56,7 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.addAllowedOrigin("http://localhost:3001");
+        configuration.addAllowedOrigin("https://port-0-b-e-repository-m1qaons0275b16c0.sel4.cloudtype.app");
         configuration.addAllowedMethod("*");
         configuration.addAllowedHeader("*");
         configuration.setAllowCredentials(true);
